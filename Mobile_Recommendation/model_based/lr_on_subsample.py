@@ -164,7 +164,7 @@ part_1_scaler = pickle.load(open(path_df_part_1_scaler,'rb'))
 part_2_scaler = pickle.load(open(path_df_part_2_scaler,'rb'))
 
 ##### generation of training set & valid set
-def train_set_construct(np_ratio = 1, sub_ratio = 1):
+def train_set_construct(np_ratio = 1, sub_ratio = 1.0):
     '''
     # generation of train set
     @param np_ratio: int, the sub-sample rate of training set for N/P balanced.
@@ -258,7 +258,7 @@ def train_set_construct(np_ratio = 1, sub_ratio = 1):
     standard_train_X_2 = part_2_scaler.transform(train_X_2)
     
     train_X = np.concatenate((standard_train_X_1, standard_train_X_2))
-    train_y = np.concatenate((train_y_1, train_y_2))
+    train_y = np.concatenate((train_y_1, train_y_2)) # type: ignore
     print("train subset is generated.")
     
     return train_X, train_y
@@ -351,7 +351,7 @@ def valid_set_construct(sub_ratio = 0.1):
     standard_valid_X_2 = part_2_scaler.transform(valid_X_2)
     
     valid_X = np.concatenate((standard_valid_X_1, standard_valid_X_2))
-    valid_y = np.concatenate((valid_y_1, valid_y_2))
+    valid_y = np.concatenate((valid_y_1, valid_y_2)) # type: ignore
     print("train subset is generated.")
     
     return valid_X, valid_y
@@ -363,7 +363,7 @@ def valid_set_construct(sub_ratio = 0.1):
         (3). selection for best cutoff of prediction
 '''
 
-'''
+
 ########## (1) selection for best N/P ratio in range(1, 100) of subsample
 f1_scores = []
 np_ratios = []
@@ -373,7 +373,7 @@ for np_ratio in range(1, 100, 2):
     train_X, train_y = train_set_construct(np_ratio=np_ratio, sub_ratio=0.5)
     
     # generation of lr model and fit
-    LR_clf = LogisticRegression(penalty='l1', verbose=True)  # L1 regularization
+    LR_clf = LogisticRegression(penalty='l1', solver='liblinear', verbose=True, max_iter=10000)  # L1 regularization
     LR_clf.fit(train_X, train_y)
     
     # validation and evaluation
@@ -394,9 +394,9 @@ plt.title('f1_score as function of NP ratio - LR')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
 
-'''
+
+
 ########## (2) selection for best regularization strength of subsample
 f1_scores = []
 cs = []
@@ -406,7 +406,7 @@ for c in [0.001, 0.01, 0.1, 1, 10, 100, 1000]:
     t1 = time.time()
     
     # generation of lr model and fit
-    LR_clf = LogisticRegression(C=c, penalty='l1', verbose=True)
+    LR_clf = LogisticRegression(C=c, penalty='l1', solver='liblinear', verbose=True)
     LR_clf.fit(train_X, train_y)
     
     # validation and evaluation
@@ -427,9 +427,8 @@ plt.title('f1_score as function of C - LR')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
 
-'''
+
 ########## (3) selection for best cutoff of prediction
 f1_scores = []
 cut_offs = []
@@ -439,7 +438,7 @@ for co in np.arange(0.1,1,0.1):
     t1 = time.time()
     
     # generation of lr model and fit
-    LR_clf = LogisticRegression(penalty='l1', verbose=True)
+    LR_clf = LogisticRegression(penalty='l1', solver='liblinear', verbose=True)
     LR_clf.fit(train_X, train_y)
     
     # validation and evaluation
@@ -460,7 +459,7 @@ plt.title('f1_score as function of cut_off - LR')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
+
 
 #######################################################################
 '''Step 2: training the optimal RF model and predicting on part_3 
@@ -523,7 +522,7 @@ for pred_uic in pd.read_csv(open(path_df_part_3_uic, 'r'), chunksize = 100000):
 train_X, train_y = train_set_construct(np_ratio=35, sub_ratio=1)
 
 # build model and fitting
-LR_clf = LogisticRegression(verbose=True)
+LR_clf = LogisticRegression(verbose=True, max_iter=1000)
 LR_clf.fit(train_X, train_y)
 
 # process by chunk as ui-pairs size is too big

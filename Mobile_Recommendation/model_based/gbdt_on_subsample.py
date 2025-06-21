@@ -400,7 +400,7 @@ def valid_train_set_construct(valid_ratio = 0.5, valid_sub_ratio = 0.5, train_np
         (4). selection for best prediction cutoff for GBDT
 '''
 
-'''
+
 ########## (1) selection for best N/P ratio of subsample
 # generation of gbdt model
 gbdt_clf = GradientBoostingClassifier(learning_rate=0.05, 
@@ -420,11 +420,11 @@ for np_ratio in [1,5,10,15,20,25,30,35,40,45,50,60,70,80,90,100,120,150,200,300]
                                                                    train_np_ratio = np_ratio,
                                                                    train_sub_ratio = 1)
     
-    gbdt_clf.fit(train_X, train_y)
+    gbdt_clf.fit(train_X, train_y) # type: ignore
     
     # validation and evaluation
     valid_y_pred = gbdt_clf.predict(valid_X)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     np_ratios.append(np_ratio)
     
     print('gbdt_clf [NP ratio = %d] is fitted' % np_ratio)
@@ -440,9 +440,8 @@ plt.title('f1_score as function of NP ratio - GBDT')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.5)
 plt.show()
-'''
 
-'''
+
 ########## (2) selection for best n_estimators and learning_rate of GBDT
 # training and validating data set generation
 valid_X, valid_y, train_X, train_y = valid_train_set_construct(valid_ratio = 0.2, 
@@ -466,11 +465,11 @@ for lr in [0.05, 0.1, 0.15, 0.2]:
                                               subsample=0.8,
                                               max_features="sqrt",
                                               verbose=True)
-        GBDT_clf.fit(train_X, train_y)
+        GBDT_clf.fit(train_X, train_y) # type: ignore
         
         # validation and evaluation
         valid_y_pred = GBDT_clf.predict(valid_X)
-        f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+        f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
         n_trees.append(nt)
         
         print('GBDT_clf [lr = %.2f, nt = %d] is fitted' % (lr, nt))
@@ -493,9 +492,8 @@ plt.title('f1_score as function of GBDT lr & nt (np=60,md=7)')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
 
-'''
+
 ########## (2) selection for best n_estimators as learning_rate=0.05 of GBDT
 # training and validating data set generation
 valid_X, valid_y, train_X, train_y = valid_train_set_construct(valid_ratio = 0.2, 
@@ -515,11 +513,11 @@ for nt in [10,20,30,40,50,60,70,80,90,100,120,140,160,180,200,250,300,400,500]:
                                           subsample=0.8,
                                           max_features="sqrt",
                                           verbose=True)
-    GBDT_clf.fit(train_X, train_y)
+    GBDT_clf.fit(train_X, train_y) # type: ignore
     
     # validation and evaluation
     valid_y_pred = GBDT_clf.predict(valid_X)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     n_trees.append(nt)
     
     print('GBDT_clf nt = %d is fitted' % nt)
@@ -535,9 +533,8 @@ plt.title('f1_score as function of GBDT nt')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
 
-'''
+
 ########## (3.1) selection for best max_depth of GBDT
 # training and validating
 valid_X, valid_y, train_X, train_y = valid_train_set_construct(valid_ratio = 0.2, 
@@ -558,11 +555,11 @@ for md in [2,3,4,5,6,7,8,9,10,12,15,20]:
                                           subsample=0.8,
                                           max_features="sqrt",
                                           verbose=True)
-    GBDT_clf.fit(train_X, train_y)
+    GBDT_clf.fit(train_X, train_y) # type: ignore
     
     # validation and evaluation
     valid_y_pred = GBDT_clf.predict(valid_X)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     max_depths.append(md)
     print('GBDT_clf [max_depth = %d] is fitted' % md)
     
@@ -579,9 +576,8 @@ plt.title('f1_score as function of GBDT max_depths')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
 
-'''
+
 ########## (3.2) selection for best min_samples_split of GBDT
 # training and validating
 valid_X, valid_y, train_X, train_y = valid_train_set_construct(valid_ratio = 0.2, 
@@ -603,11 +599,11 @@ for mss in [2,5,10,20,50,100,500,1000,5000]:
                                           subsample=0.8,
                                           max_features="sqrt",
                                           verbose=True)
-    GBDT_clf.fit(train_X, train_y)
+    GBDT_clf.fit(train_X, train_y) # type: ignore
     
     # validation and evaluation
     valid_y_pred = GBDT_clf.predict(valid_X)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     min_samples_splits.append(mss)
     print('GBDT_clf [min_samples_splits = %d] is fitted' % mss)
     
@@ -624,9 +620,8 @@ plt.title('f1_score as function of GBDT min_samples_split')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
 
-'''
+
 ########## (3.2) selection for best min_samples_leaf of GBDT
 # training and validating
 valid_X, valid_y, train_X, train_y = valid_train_set_construct(valid_ratio = 0.2, 
@@ -648,11 +643,11 @@ for msl in range(2,30,2):
                                           subsample=0.8,
                                           max_features="sqrt",
                                           verbose=True)
-    GBDT_clf.fit(train_X, train_y)
+    GBDT_clf.fit(train_X, train_y) # type: ignore
     
     # validation and evaluation
     valid_y_pred = GBDT_clf.predict(valid_X)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     min_samples_leafs.append(msl)
     print('GBDT_clf [min_samples_leaf = %d] is fitted' % msl)
     
@@ -669,9 +664,8 @@ plt.title('f1_score as function of GBDT min_samples_leaf')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
 
-'''
+
 ########## (4) selection for best prediction cutoff for GBDT
 # training and validating
 valid_X, valid_y, train_X, train_y = valid_train_set_construct(valid_ratio = 0.2, 
@@ -686,14 +680,14 @@ GBDT_clf = GradientBoostingClassifier(learning_rate=0.025,
                                       subsample=0.8,
                                       max_features="sqrt",
                                       verbose=True)
-GBDT_clf.fit(train_X, train_y)
+GBDT_clf.fit(train_X, train_y) # type: ignore
 cut_offs = []
 f1_scores = []
 for co in np.arange(0.05,1,0.05):
     t1 = time.time()
     # validation and evaluation
     valid_y_pred = (GBDT_clf.predict_proba(valid_X)[:,1] > co).astype(int)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     cut_offs.append(co)
     print('GBDT_clf [cutoff = %.2f] is fitted' % co)
     
@@ -710,7 +704,7 @@ plt.title('f1_score as function of GBDT predict cutoff')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
+
 
 #######################################################################
 '''Step 2: training the optimal GBDT model and predicting on part_3 
@@ -725,7 +719,7 @@ GBDT_clf = GradientBoostingClassifier(max_depth=4,
                                       subsample=0.8,
                                       max_features="sqrt",
                                       verbose=True)
-GBDT_clf.fit(train_X, train_y)
+GBDT_clf.fit(train_X, train_y) # type: ignore
 
 ##### predicting
 # loading feature data

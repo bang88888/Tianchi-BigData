@@ -398,7 +398,7 @@ def valid_set_construct(sub_ratio = 0.1):
         (4). selection for best prediction cutoff for RF
 '''
 
-'''
+
 ########## 1.1 selection for best N/P ratio of subsamole
 f1_scores = []
 np_ratios = []
@@ -415,11 +415,11 @@ for np_ratio in [1, 5, 10, 30, 50, 70, 100]:
                                     n_estimators=100, 
                                     max_features="sqrt", 
                                     verbose=True)
-    rf_clf.fit(train_X, train_y)    
+    rf_clf.fit(train_X, train_y)     # type: ignore
     
     # validation and evaluation
     valid_y_pred = rf_clf.predict(valid_X)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     np_ratios.append(np_ratio)
     print('rf_clf [NP ratio = %d] is fitted' % np_ratio)
     
@@ -435,7 +435,7 @@ plt.title('f1_score as function of NP ratio - RF')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
+
 
 
 ########## 1.2 selection for best n_estimators of RF
@@ -454,11 +454,11 @@ for nt in [10, 20, 40, 80, 120, 160, 200, 300, 400, 500, 600, 700, 800]:
                                     max_depth=35, 
                                     max_features="sqrt", 
                                     verbose=True)
-    RF_clf.fit(train_X, train_y)
+    RF_clf.fit(train_X, train_y) # type: ignore
     
     # validation and evaluation
     valid_y_pred = RF_clf.predict(valid_X)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     n_trees.append(nt)
     print('RF_clf [n_estimators = %d] is fitted' % nt)
     
@@ -476,7 +476,7 @@ plt.grid(True, linewidth=0.3)
 plt.show()
 
 
-'''
+
 ########## 1.3 selection for best max_depth in range(1, 50) of RF
 # training and validating
 f1_scores = []
@@ -492,11 +492,11 @@ for md in [1,5,7,10,15,20,25,30,35,40,45,50,55,60]:
     
     # generation of RF model and fit
     RF_clf = RandomForestClassifier(max_depth=md, n_estimators=150, max_features="sqrt", verbose=True)
-    RF_clf.fit(train_X, train_y)
+    RF_clf.fit(train_X, train_y) # type: ignore
     
     # validation and evaluation
     valid_y_pred = RF_clf.predict(valid_X)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     max_depths.append(md)
     print('RF_clf [max_depths = %d] is fitted' % md)
 
@@ -512,9 +512,9 @@ plt.title('f1_score as function of RF max_depths')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
 
-'''
+
+
 ########## (3.2) selection for best min_samples_split
 # training and validating
 valid_X, valid_y, train_X, train_y = valid_train_set_construct(valid_ratio = 0.2, 
@@ -533,11 +533,11 @@ for mss in [2,4,6,8,10,15,20,18,20,25,30,40,50,60,70,80,90]:
                                     n_estimators=150, 
                                     max_features="sqrt",
                                     verbose=True)
-    RF_clf.fit(train_X, train_y)
+    RF_clf.fit(train_X, train_y) # type: ignore
     
     # validation and evaluation
     valid_y_pred = RF_clf.predict(valid_X)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     min_samples_splits.append(mss)
     print('RF_clf [min_samples_splits = %d] is fitted' % mss)
     
@@ -553,9 +553,9 @@ plt.title('f1_score as function of RF min_samples_split')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
 
-'''
+
+
 ########## 1.4 selection for best cutoff in range(0.1, 0.9, 0.1) of RF
 # training and validating
 f1_scores = []
@@ -571,12 +571,12 @@ RF_clf = RandomForestClassifier(max_depth=30,
                                 n_estimators=150, 
                                 max_features="sqrt", 
                                 verbose=True)
-RF_clf.fit(train_X, train_y)
+RF_clf.fit(train_X, train_y) # type: ignore
 
 for cutoff in np.arange(0.1, 1, 0.05):
     # validation and evaluation
     valid_y_pred = (RF_clf.predict_proba(valid_X)[:,1] > cutoff).astype(int)
-    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred))
+    f1_scores.append(metrics.f1_score(valid_y, valid_y_pred)) # type: ignore
     cut_offs.append(cutoff)
     print('RF_clf [cutoff = %.2f] is fitted' % cutoff)
 
@@ -589,7 +589,7 @@ plt.title('f1_score as function of RF cut_offs')
 plt.legend(loc=4)
 plt.grid(True, linewidth=0.3)
 plt.show()
-'''
+
 
 '''
 @conclusion: after testing, best parameter in RF model for current data set is:
@@ -607,7 +607,7 @@ plt.show()
 # build model and fitting
 RF_clf = RandomForestClassifier(max_depth=30, n_estimators=150, max_features="sqrt")
 train_X, train_y = train_set_construct(np_ratio=5, sub_ratio=1)
-RF_clf.fit(train_X, train_y)
+RF_clf.fit(train_X, train_y) # type: ignore
 
 ##### predicting
 # loading feature data
