@@ -84,7 +84,7 @@ for df in pd.read_csv(
             except:
                 count_day[date] += 0
         batch += 1
-        print('chunk %d done.' %batch ) 
+        print('visualization month record based on date(11-18->12-18) chunk %d done.' %batch ) 
         
     except StopIteration:
         print("finish data process")
