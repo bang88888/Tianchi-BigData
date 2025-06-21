@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*
     
 '''
-@author: PY131
+@author: kuaidouai
 
 @thoughts:  as the samples are extremely imbalance (N/P ratio ~ 1.2k),
             here we use sub-sample on negative samples.
@@ -16,47 +16,52 @@
 ########## file path ##########
 ##### input file
 # training set keys uic-label with k_means clusters' label
-path_df_part_1_uic_label_cluster = "../../data/mobile/lr/k_means_subsample/df_part_1_uic_label_cluster.csv"
-path_df_part_2_uic_label_cluster = "../../data/mobile/lr/k_means_subsample/df_part_2_uic_label_cluster.csv"
-path_df_part_3_uic       = "../../data/mobile/raw/df_part_3_uic.csv"
+path_df_part_1_uic_label_cluster = "data/mobile/k_means_subsample/df_part_1_uic_label_cluster.csv"
+path_df_part_2_uic_label_cluster = "data/mobile/k_means_subsample/df_part_2_uic_label_cluster.csv"
+path_df_part_3_uic       = "data/mobile/raw/df_part_3_uic.csv"
 
 # data_set features
-path_df_part_1_U   = "../../data/mobile/feature/df_part_1_U.csv"  
-path_df_part_1_I   = "../../data/mobile/feature/df_part_1_I.csv"
-path_df_part_1_C   = "../../data/mobile/feature/df_part_1_C.csv"
-path_df_part_1_IC  = "../../data/mobile/feature/df_part_1_IC.csv"
-path_df_part_1_UI  = "../../data/mobile/feature/df_part_1_UI.csv"
-path_df_part_1_UC  = "../../data/mobile/feature/df_part_1_UC.csv"
+path_df_part_1_U   = "data/mobile/feature/df_part_1_U.csv"  
+path_df_part_1_I   = "data/mobile/feature/df_part_1_I.csv"
+path_df_part_1_C   = "data/mobile/feature/df_part_1_C.csv"
+path_df_part_1_IC  = "data/mobile/feature/df_part_1_IC.csv"
+path_df_part_1_UI  = "data/mobile/feature/df_part_1_UI.csv"
+path_df_part_1_UC  = "data/mobile/feature/df_part_1_UC.csv"
 
-path_df_part_2_U   = "../../data/mobile/feature/df_part_2_U.csv"  
-path_df_part_2_I   = "../../data/mobile/feature/df_part_2_I.csv"
-path_df_part_2_C   = "../../data/mobile/feature/df_part_2_C.csv"
-path_df_part_2_IC  = "../../data/mobile/feature/df_part_2_IC.csv"
-path_df_part_2_UI  = "../../data/mobile/feature/df_part_2_UI.csv"
-path_df_part_2_UC  = "../../data/mobile/feature/df_part_2_UC.csv"
+path_df_part_2_U   = "data/mobile/feature/df_part_2_U.csv"  
+path_df_part_2_I   = "data/mobile/feature/df_part_2_I.csv"
+path_df_part_2_C   = "data/mobile/feature/df_part_2_C.csv"
+path_df_part_2_IC  = "data/mobile/feature/df_part_2_IC.csv"
+path_df_part_2_UI  = "data/mobile/feature/df_part_2_UI.csv"
+path_df_part_2_UC  = "data/mobile/feature/df_part_2_UC.csv"
 
-path_df_part_3_U   = "../../data/mobile/feature/df_part_3_U.csv"  
-path_df_part_3_I   = "../../data/mobile/feature/df_part_3_I.csv"
-path_df_part_3_C   = "../../data/mobile/feature/df_part_3_C.csv"
-path_df_part_3_IC  = "../../data/mobile/feature/df_part_3_IC.csv"
-path_df_part_3_UI  = "../../data/mobile/feature/df_part_3_UI.csv"
-path_df_part_3_UC  = "../../data/mobile/feature/df_part_3_UC.csv"
+path_df_part_3_U   = "data/mobile/feature/df_part_3_U.csv"  
+path_df_part_3_I   = "data/mobile/feature/df_part_3_I.csv"
+path_df_part_3_C   = "data/mobile/feature/df_part_3_C.csv"
+path_df_part_3_IC  = "data/mobile/feature/df_part_3_IC.csv"
+path_df_part_3_UI  = "data/mobile/feature/df_part_3_UI.csv"
+path_df_part_3_UC  = "data/mobile/feature/df_part_3_UC.csv"
+
 
 # normalize scaler
-path_df_part_1_scaler = "../../data/mobile/lr/k_means_subsample/df_part_1_scaler"
-path_df_part_2_scaler = "../../data/mobile/lr/k_means_subsample/df_part_2_scaler"
+path_df_part_1_scaler = "data/mobile/k_means_subsample/df_part_1_scaler"
+path_df_part_2_scaler = "data/mobile/k_means_subsample/df_part_2_scaler"
 
 # item_sub_set P
-path_df_P = "../../data/raw/tianchi_fresh_comp_train_item.csv"
+path_df_P = "data/fresh_comp_offline/tianchi_fresh_comp_train_item.csv"
 
+import os
 ##### output file
-path_df_result     = "../../data/mobile/lr/res_LR_k_means_subsample.csv"
-path_df_result_tmp = "../../data/mobile/lr/df_result_tmp.csv"
+path_df_result     = "data/mobile/lr/result_sample.csv"
+path_df_result_tmp = "data/mobile/lr/df_result_tmp.csv"
+os.makedirs(os.path.dirname(path_df_result), exist_ok=True)
 
 # depending package
 import pandas as pd
 import numpy as np
 import pickle
+import warnings
+warnings.filterwarnings('ignore', category=RuntimeWarning)
 
 from sklearn import preprocessing
 from sklearn.linear_model import LogisticRegression
@@ -65,6 +70,57 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 
 import time
+
+def clean_data(data):
+    '''数据清理函数，处理NaN值、无穷大值和异常值'''
+    # 确保数据是浮点类型
+    data = data.astype(np.float64)
+    
+    # 替换无穷大值为NaN
+    data = np.where(np.isinf(data), np.nan, data)
+    
+    # 处理NaN值，用列的中位数填充（如果全是NaN则用0）
+    for i in range(data.shape[1]):
+        col = data[:, i]
+        if np.isnan(col).all():
+            data[:, i] = 0.0
+        else:
+            median_val = np.nanmedian(col)
+            if np.isnan(median_val):
+                median_val = 0.0
+            data[:, i] = np.where(np.isnan(col), median_val, col)
+    
+    # 处理极端异常值 - 使用更严格的界限
+    for i in range(data.shape[1]):
+        col_data = data[:, i]
+        if np.std(col_data) > 0:  # 只处理有变化的列
+            # 使用更严格的分位数界限
+            q1 = np.percentile(col_data, 25)
+            q3 = np.percentile(col_data, 75)
+            iqr = q3 - q1
+            
+            # 使用IQR方法定义异常值界限
+            lower_bound = q1 - 1.5 * iqr
+            upper_bound = q3 + 1.5 * iqr
+            
+            # 确保界限是有限的
+            if not np.isfinite(lower_bound):
+                lower_bound = np.percentile(col_data, 1)
+            if not np.isfinite(upper_bound):
+                upper_bound = np.percentile(col_data, 99)
+                
+            # 将异常值替换为边界值
+            data[:, i] = np.clip(col_data, lower_bound, upper_bound)
+    
+    # 最终检查：确保没有无穷大或NaN值
+    data = np.nan_to_num(data, nan=0.0, posinf=1e6, neginf=-1e6)
+    
+    # 检查数据的数值范围，如果太大则进行缩放
+    max_val = np.max(np.abs(data))
+    if max_val > 1e6:
+        data = data / (max_val / 1e3)  # 缩放到合理范围
+    
+    return data
 
 # some functions
 def df_read(path, mode = 'r'):
@@ -144,7 +200,7 @@ def train_set_construct(np_ratio = 1, sub_ratio = 1):
     train_part_2_df = pd.merge(train_part_2_df, df_part_2_UC, how='left', on=['user_id','item_category'])
        
     # using all the features without missing value for valid lr model
-    train_X_1 = train_part_1_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+    train_X_1 = train_part_1_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                            'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                            'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                            'u_b4_rate',
@@ -165,13 +221,15 @@ def train_set_construct(np_ratio = 1, sub_ratio = 1):
                                            'uc_b1_count_in_6','uc_b2_count_in_6','uc_b3_count_in_6','uc_b4_count_in_6','uc_b_count_in_6', 
                                            'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                            'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
-                                           'uc_b_count_rank_in_u'])
+                                           'uc_b_count_rank_in_u']].values
     train_y_1 = train_part_1_df['label'].values
+    # 数据清理
+    train_X_1 = clean_data(train_X_1)
     # feature standardization
     standard_train_X_1 = part_1_scaler.transform(train_X_1)
 
     # using all the features without missing value for valid lr model
-    train_X_2 = train_part_2_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+    train_X_2 = train_part_2_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                            'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                            'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                            'u_b4_rate',
@@ -192,8 +250,10 @@ def train_set_construct(np_ratio = 1, sub_ratio = 1):
                                            'uc_b1_count_in_6','uc_b2_count_in_6','uc_b3_count_in_6','uc_b4_count_in_6','uc_b_count_in_6', 
                                            'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                            'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
-                                           'uc_b_count_rank_in_u'])
+                                           'uc_b_count_rank_in_u']].values
     train_y_2 = train_part_2_df['label'].values
+    # 数据清理
+    train_X_2 = clean_data(train_X_2)
     # feature standardization
     standard_train_X_2 = part_2_scaler.transform(train_X_2)
     
@@ -237,7 +297,7 @@ def valid_set_construct(sub_ratio = 0.1):
     valid_part_2_df = pd.merge(valid_part_2_df, df_part_2_UC, how='left', on=['user_id','item_category'])
     
     # using all the features without missing value for valid lr model
-    valid_X_1 = valid_part_1_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+    valid_X_1 = valid_part_1_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                            'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                            'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                            'u_b4_rate',
@@ -258,13 +318,13 @@ def valid_set_construct(sub_ratio = 0.1):
                                            'uc_b1_count_in_6','uc_b2_count_in_6','uc_b3_count_in_6','uc_b4_count_in_6','uc_b_count_in_6', 
                                            'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                            'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
-                                           'uc_b_count_rank_in_u'])
+                                           'uc_b_count_rank_in_u']].values
     valid_y_1 = valid_part_1_df['label'].values
     # feature standardization
     standard_valid_X_1 = part_1_scaler.transform(valid_X_1)
 
     # using all the features without missing value for valid lr model
-    valid_X_2 = valid_part_2_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+    valid_X_2 = valid_part_2_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                            'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                            'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                            'u_b4_rate',
@@ -285,7 +345,7 @@ def valid_set_construct(sub_ratio = 0.1):
                                            'uc_b1_count_in_6','uc_b2_count_in_6','uc_b3_count_in_6','uc_b4_count_in_6','uc_b_count_in_6', 
                                            'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                            'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
-                                           'uc_b_count_rank_in_u'])
+                                           'uc_b_count_rank_in_u']].values
     valid_y_2 = valid_part_2_df['label'].values
     # feature standardization
     standard_valid_X_2 = part_2_scaler.transform(valid_X_2)
@@ -427,7 +487,7 @@ for pred_uic in pd.read_csv(open(path_df_part_3_uic, 'r'), chunksize = 100000):
         pred_df = pd.merge(pred_df,  df_part_3_UI, how='left', on=['user_id','item_id','item_category'])
         pred_df = pd.merge(pred_df,  df_part_3_UC, how='left', on=['user_id','item_category'])
         
-        pred_X = pred_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+        pred_X = pred_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                     'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                     'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                     'u_b4_rate',
@@ -448,7 +508,7 @@ for pred_uic in pd.read_csv(open(path_df_part_3_uic, 'r'), chunksize = 100000):
                                     'uc_b1_count_in_6','uc_b2_count_in_6','uc_b3_count_in_6','uc_b4_count_in_6','uc_b_count_in_6', 
                                     'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                     'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
-                                    'uc_b_count_rank_in_u'])
+                                    'uc_b_count_rank_in_u']].values
         # feature standardization
         scaler_3.partial_fit(pred_X)   
         
@@ -482,7 +542,7 @@ for pred_uic in pd.read_csv(open(path_df_part_3_uic, 'r'), chunksize = 100000):
         pred_df.fillna(-1, inplace=True)
         
         # using all the features for training RF model
-        pred_X = pred_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+        pred_X = pred_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                     'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                     'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                     'u_b4_rate',
@@ -503,7 +563,7 @@ for pred_uic in pd.read_csv(open(path_df_part_3_uic, 'r'), chunksize = 100000):
                                     'uc_b1_count_in_6','uc_b2_count_in_6','uc_b3_count_in_6','uc_b4_count_in_6','uc_b_count_in_6', 
                                     'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                     'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
-                                    'uc_b_count_rank_in_u'])
+                                    'uc_b_count_rank_in_u']].values
 
         # predicting
         # feature standardization
@@ -540,4 +600,4 @@ df_pred_P.to_csv(path_df_result, index=False)
 
 
 
-print(' - PY131 - ')
+print(' - kuaidouai - ')

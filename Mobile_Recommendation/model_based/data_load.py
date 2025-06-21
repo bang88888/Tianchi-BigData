@@ -2,31 +2,31 @@
 
 #################### file path ####################
 # training set keys uic-label with k_means clusters' label
-path_df_part_1_uic_label_cluster = "../../data/mobile/xgb/k_means_subsample/df_part_1_uic_label_cluster.csv"
-path_df_part_2_uic_label_cluster = "../../data/mobile/xgb/k_means_subsample/df_part_2_uic_label_cluster.csv"
-path_df_part_3_uic = "../../data/mobile/raw/df_part_3_uic.csv"
+path_df_part_1_uic_label_cluster = "data/mobile/k_means_subsample/df_part_1_uic_label_cluster.csv"
+path_df_part_2_uic_label_cluster = "data/mobile/k_means_subsample/df_part_2_uic_label_cluster.csv"
+path_df_part_3_uic = "data/mobile/raw/df_part_3_uic.csv"
 
 # data_set features
-path_df_part_1_U   = "../../data/mobile/feature/df_part_1_U.csv"  
-path_df_part_1_I   = "../../data/mobile/feature/df_part_1_I.csv"
-path_df_part_1_C   = "../../data/mobile/feature/df_part_1_C.csv"
-path_df_part_1_IC  = "../../data/mobile/feature/df_part_1_IC.csv"
-path_df_part_1_UI  = "../../data/mobile/feature/df_part_1_UI.csv"
-path_df_part_1_UC  = "../../data/mobile/feature/df_part_1_UC.csv"
+path_df_part_1_U   = "data/mobile/feature/df_part_1_U.csv"  
+path_df_part_1_I   = "data/mobile/feature/df_part_1_I.csv"
+path_df_part_1_C   = "data/mobile/feature/df_part_1_C.csv"
+path_df_part_1_IC  = "data/mobile/feature/df_part_1_IC.csv"
+path_df_part_1_UI  = "data/mobile/feature/df_part_1_UI.csv"
+path_df_part_1_UC  = "data/mobile/feature/df_part_1_UC.csv"
 
-path_df_part_2_U   = "../../data/mobile/feature/df_part_2_U.csv"  
-path_df_part_2_I   = "../../data/mobile/feature/df_part_2_I.csv"
-path_df_part_2_C   = "../../data/mobile/feature/df_part_2_C.csv"
-path_df_part_2_IC  = "../../data/mobile/feature/df_part_2_IC.csv"
-path_df_part_2_UI  = "../../data/mobile/feature/df_part_2_UI.csv"
-path_df_part_2_UC  = "../../data/mobile/feature/df_part_2_UC.csv"
+path_df_part_2_U   = "data/mobile/feature/df_part_2_U.csv"  
+path_df_part_2_I   = "data/mobile/feature/df_part_2_I.csv"
+path_df_part_2_C   = "data/mobile/feature/df_part_2_C.csv"
+path_df_part_2_IC  = "data/mobile/feature/df_part_2_IC.csv"
+path_df_part_2_UI  = "data/mobile/feature/df_part_2_UI.csv"
+path_df_part_2_UC  = "data/mobile/feature/df_part_2_UC.csv"
 
-path_df_part_3_U   = "../../data/mobile/feature/df_part_3_U.csv"  
-path_df_part_3_I   = "../../data/mobile/feature/df_part_3_I.csv"
-path_df_part_3_C   = "../../data/mobile/feature/df_part_3_C.csv"
-path_df_part_3_IC  = "../../data/mobile/feature/df_part_3_IC.csv"
-path_df_part_3_UI  = "../../data/mobile/feature/df_part_3_UI.csv"
-path_df_part_3_UC  = "../../data/mobile/feature/df_part_3_UC.csv"
+path_df_part_3_U   = "data/mobile/feature/df_part_3_U.csv"  
+path_df_part_3_I   = "data/mobile/feature/df_part_3_I.csv"
+path_df_part_3_C   = "data/mobile/feature/df_part_3_C.csv"
+path_df_part_3_IC  = "data/mobile/feature/df_part_3_IC.csv"
+path_df_part_3_UI  = "data/mobile/feature/df_part_3_UI.csv"
+path_df_part_3_UC  = "data/mobile/feature/df_part_3_UC.csv"
 
 import pandas as pd
 import numpy as np
@@ -393,11 +393,4 @@ def data_set_construct_by_part(np_ratio = 1, sub_ratio = 1):
       
     print("train subset is generated.")
     return train_part_1_df, train_part_2_df
-
-    
-
-    
-    
-    
-    
     

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*
     
 '''
-@author: PY131
+@author: kuaidouai
 
 @thoughts:  as the samples are extremely imbalance (N/P ratio ~ 1.2k),
             here we use sub-sample on negative samples.
@@ -17,38 +17,40 @@
 ########## file path ##########
 ##### input file
 # training set keys uic-label with k_means clusters' label
-path_df_part_1_uic_label_cluster = "../../data/mobile/gbdt/k_means_subsample/df_part_1_uic_label_cluster.csv"
-path_df_part_2_uic_label_cluster = "../../data/mobile/gbdt/k_means_subsample/df_part_2_uic_label_cluster.csv"
-path_df_part_3_uic       = "../../data/mobile/raw/df_part_3_uic.csv"
+path_df_part_1_uic_label_cluster = "data/mobile/k_means_subsample/df_part_1_uic_label_cluster.csv"
+path_df_part_2_uic_label_cluster = "data/mobile/k_means_subsample/df_part_2_uic_label_cluster.csv"
+path_df_part_3_uic       = "data/mobile/raw/df_part_3_uic.csv"
 
 # data_set features
-path_df_part_1_U   = "../../data/mobile/feature/df_part_1_U.csv"  
-path_df_part_1_I   = "../../data/mobile/feature/df_part_1_I.csv"
-path_df_part_1_C   = "../../data/mobile/feature/df_part_1_C.csv"
-path_df_part_1_IC  = "../../data/mobile/feature/df_part_1_IC.csv"
-path_df_part_1_UI  = "../../data/mobile/feature/df_part_1_UI.csv"
-path_df_part_1_UC  = "../../data/mobile/feature/df_part_1_UC.csv"
+path_df_part_1_U   = "data/mobile/feature/df_part_1_U.csv"  
+path_df_part_1_I   = "data/mobile/feature/df_part_1_I.csv"
+path_df_part_1_C   = "data/mobile/feature/df_part_1_C.csv"
+path_df_part_1_IC  = "data/mobile/feature/df_part_1_IC.csv"
+path_df_part_1_UI  = "data/mobile/feature/df_part_1_UI.csv"
+path_df_part_1_UC  = "data/mobile/feature/df_part_1_UC.csv"
 
-path_df_part_2_U   = "../../data/mobile/feature/df_part_2_U.csv"  
-path_df_part_2_I   = "../../data/mobile/feature/df_part_2_I.csv"
-path_df_part_2_C   = "../../data/mobile/feature/df_part_2_C.csv"
-path_df_part_2_IC  = "../../data/mobile/feature/df_part_2_IC.csv"
-path_df_part_2_UI  = "../../data/mobile/feature/df_part_2_UI.csv"
-path_df_part_2_UC  = "../../data/mobile/feature/df_part_2_UC.csv"
+path_df_part_2_U   = "data/mobile/feature/df_part_2_U.csv"  
+path_df_part_2_I   = "data/mobile/feature/df_part_2_I.csv"
+path_df_part_2_C   = "data/mobile/feature/df_part_2_C.csv"
+path_df_part_2_IC  = "data/mobile/feature/df_part_2_IC.csv"
+path_df_part_2_UI  = "data/mobile/feature/df_part_2_UI.csv"
+path_df_part_2_UC  = "data/mobile/feature/df_part_2_UC.csv"
 
-path_df_part_3_U   = "../../data/mobile/feature/df_part_3_U.csv"  
-path_df_part_3_I   = "../../data/mobile/feature/df_part_3_I.csv"
-path_df_part_3_C   = "../../data/mobile/feature/df_part_3_C.csv"
-path_df_part_3_IC  = "../../data/mobile/feature/df_part_3_IC.csv"
-path_df_part_3_UI  = "../../data/mobile/feature/df_part_3_UI.csv"
-path_df_part_3_UC  = "../../data/mobile/feature/df_part_3_UC.csv"
+path_df_part_3_U   = "data/mobile/feature/df_part_3_U.csv"  
+path_df_part_3_I   = "data/mobile/feature/df_part_3_I.csv"
+path_df_part_3_C   = "data/mobile/feature/df_part_3_C.csv"
+path_df_part_3_IC  = "data/mobile/feature/df_part_3_IC.csv"
+path_df_part_3_UI  = "data/mobile/feature/df_part_3_UI.csv"
+path_df_part_3_UC  = "data/mobile/feature/df_part_3_UC.csv"
 
 # item_sub_set P
-path_df_P = "../../data/raw/tianchi_fresh_comp_train_item.csv"
+path_df_P = "data/fresh_comp_offline/tianchi_fresh_comp_train_item.csv"
 
+import os
 ##### output file
-path_df_result = "../../data/mobile/gbdt/res_gbdt_k_means_subsample.csv"
-path_df_result_tmp = "../../data/mobile/gbdt/df_result_tmp.csv"
+path_df_result = "data/mobile/gbdt/result_sample.csv"
+path_df_result_tmp = "data/mobile/gbdt/df_result_tmp.csv"
+os.makedirs(os.path.dirname(path_df_result), exist_ok=True)
 
 # depending package
 import pandas as pd
@@ -141,7 +143,7 @@ def train_set_construct(np_ratio = 1, sub_ratio = 1):
     train_df.fillna(-1, inplace=True)
     
     # using all the features for training gbdt model
-    train_X = train_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+    train_X = train_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                   'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                   'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                   'u_b4_rate','u_b4_diff_hours',
@@ -165,7 +167,7 @@ def train_set_construct(np_ratio = 1, sub_ratio = 1):
                                   'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                   'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
                                   'uc_b_count_rank_in_u',
-                                  'uc_b1_last_hours','uc_b2_last_hours','uc_b3_last_hours','uc_b4_last_hours'])
+                                  'uc_b1_last_hours','uc_b2_last_hours','uc_b3_last_hours','uc_b4_last_hours']].values
     train_y = train_df['label'].values
     print("train subset is generated.")
     return train_X, train_y
@@ -208,7 +210,7 @@ def valid_set_construct(sub_ratio = 0.1):
     valid_df.fillna(-1, inplace=True)
     
     # using all the features for valid gbdt model
-    valid_X = valid_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+    valid_X = valid_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                   'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                   'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                   'u_b4_rate','u_b4_diff_hours',
@@ -232,7 +234,7 @@ def valid_set_construct(sub_ratio = 0.1):
                                   'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                   'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
                                   'uc_b_count_rank_in_u',
-                                  'uc_b1_last_hours','uc_b2_last_hours','uc_b3_last_hours','uc_b4_last_hours'])
+                                  'uc_b1_last_hours','uc_b2_last_hours','uc_b3_last_hours','uc_b4_last_hours']].values
     valid_y = valid_df['label'].values
     print("valid subset is generated.")
  
@@ -291,7 +293,7 @@ def valid_train_set_construct(valid_ratio = 0.5, valid_sub_ratio = 0.5, train_np
     valid_df.fillna(-1, inplace=True)
     
     # using all the features for valid rf model
-    valid_X = valid_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+    valid_X = valid_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                   'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                   'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                   'u_b4_rate','u_b4_diff_hours',
@@ -315,7 +317,7 @@ def valid_train_set_construct(valid_ratio = 0.5, valid_sub_ratio = 0.5, train_np
                                   'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                   'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
                                   'uc_b_count_rank_in_u',
-                                  'uc_b1_last_hours','uc_b2_last_hours','uc_b3_last_hours','uc_b4_last_hours'])
+                                  'uc_b1_last_hours','uc_b2_last_hours','uc_b3_last_hours','uc_b4_last_hours']].values
     valid_y = valid_df['label'].values
     print("valid subset is generated.")
 
@@ -359,7 +361,7 @@ def valid_train_set_construct(valid_ratio = 0.5, valid_sub_ratio = 0.5, train_np
     train_df.fillna(-1, inplace=True)
     
     # using all the features for training rf model
-    train_X = train_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+    train_X = train_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                   'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                   'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                   'u_b4_rate','u_b4_diff_hours',
@@ -383,7 +385,7 @@ def valid_train_set_construct(valid_ratio = 0.5, valid_sub_ratio = 0.5, train_np
                                   'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                   'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
                                   'uc_b_count_rank_in_u',
-                                  'uc_b1_last_hours','uc_b2_last_hours','uc_b3_last_hours','uc_b4_last_hours'])
+                                  'uc_b1_last_hours','uc_b2_last_hours','uc_b3_last_hours','uc_b4_last_hours']].values
     train_y = train_df['label'].values
     print("train subset is generated.")
     
@@ -750,7 +752,7 @@ for pred_uic in pd.read_csv(open(path_df_part_3_uic, 'r'), chunksize = 100000):
         pred_df.fillna(-1, inplace=True)
         
         # using all the features for training RF model
-        pred_X = pred_df.as_matrix(['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
+        pred_X = pred_df[['u_b1_count_in_6','u_b2_count_in_6','u_b3_count_in_6','u_b4_count_in_6','u_b_count_in_6', 
                                     'u_b1_count_in_3','u_b2_count_in_3','u_b3_count_in_3','u_b4_count_in_3','u_b_count_in_3', 
                                     'u_b1_count_in_1','u_b2_count_in_1','u_b3_count_in_1','u_b4_count_in_1','u_b_count_in_1', 
                                     'u_b4_rate','u_b4_diff_hours',
@@ -774,7 +776,7 @@ for pred_uic in pd.read_csv(open(path_df_part_3_uic, 'r'), chunksize = 100000):
                                     'uc_b1_count_in_3','uc_b2_count_in_3','uc_b3_count_in_3','uc_b4_count_in_3','uc_b_count_in_3', 
                                     'uc_b1_count_in_1','uc_b2_count_in_1','uc_b3_count_in_1','uc_b4_count_in_1','uc_b_count_in_1',
                                     'uc_b_count_rank_in_u',
-                                    'uc_b1_last_hours','uc_b2_last_hours','uc_b3_last_hours','uc_b4_last_hours'])
+                                    'uc_b1_last_hours','uc_b2_last_hours','uc_b3_last_hours','uc_b4_last_hours']].values
 
         # predicting
         pred_y = (GBDT_clf.predict_proba(pred_X)[:,1] > 0.45).astype(int)
@@ -808,4 +810,4 @@ df_pred_P = pd.merge(df_pred, df_P_item, on=['item_id'], how='inner')[['user_id'
 df_pred_P.to_csv(path_df_result, index=False)
 
 
-print(' - PY131 - ')
+print(' - kuaidouai - ')
