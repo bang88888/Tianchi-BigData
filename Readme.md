@@ -19,3 +19,49 @@ here is a repository for my code during **Tianchi big data competition**, for mo
 
 -----
 
+- 初始化环境（自行安装uv）
+
+```
+uv sync
+```
+
+- 数据加载测试
+
+```bash
+uv run python Mobile_Recommendation/data_preanalysis/time_test_of_data_loading.py
+```
+
+- 数据可视化分析
+
+```bash
+uv run python Mobile_Recommendation/data_preanalysis/data_analysis.py
+```
+
+- 基于简单规则的预测
+
+```bash
+uv run python Mobile_Recommendation/rule_based/rule_example.py
+```
+
+- 特征构建
+
+```bash
+uv run python Mobile_Recommendation/feature_construct/divide_data_set.py
+uv run python Mobile_Recommendation/feature_construct/feature_construct_part_1.py
+uv run python Mobile_Recommendation/feature_construct/feature_construct_part_2.py
+uv run python Mobile_Recommendation/feature_construct/feature_construct_part_3.py
+```
+
+-
+
+```bash
+uv run python Mobile_Recommendation/model_based/k_means_preprocessing.py
+
+uv run python Mobile_Recommendation/model_basedlr_on_subsample.py
+
+uv run python Mobile_Recommendation/model_based/rf_on_subsample.py
+
+uv run python Mobile_Recommendation/model_based/gbdt_on_subsample.py
+
+uv run python Mobile_Recommendation/xgb_test.py
+```

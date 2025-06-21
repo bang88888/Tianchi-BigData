@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*
 
 '''
-@author: PY131
+@author: kuaidouai
 
 @thoughts:  as the samples are extremely imbalance (N/P ratio ~ 1.2k),
 
@@ -15,38 +15,40 @@
 ########## file path ##########
 ##### input file
 # training set keys uic-label with k_means clusters' label
-path_df_part_1_uic_label_cluster = "../../data/mobile/xgb/k_means_subsample/df_part_1_uic_label_cluster.csv"
-path_df_part_2_uic_label_cluster = "../../data/mobile/xgb/k_means_subsample/df_part_2_uic_label_cluster.csv"
-path_df_part_3_uic = "../../data/mobile/raw/df_part_3_uic.csv"
+path_df_part_1_uic_label_cluster = "data/mobile/k_means_subsample/df_part_1_uic_label_cluster.csv"
+path_df_part_2_uic_label_cluster = "data/mobile/k_means_subsample/df_part_2_uic_label_cluster.csv"
+path_df_part_3_uic = "data/mobile/raw/df_part_3_uic.csv"
 
 # data_set features
-path_df_part_1_U   = "../../data/mobile/feature/df_part_1_U.csv"  
-path_df_part_1_I   = "../../data/mobile/feature/df_part_1_I.csv"
-path_df_part_1_C   = "../../data/mobile/feature/df_part_1_C.csv"
-path_df_part_1_IC  = "../../data/mobile/feature/df_part_1_IC.csv"
-path_df_part_1_UI  = "../../data/mobile/feature/df_part_1_UI.csv"
-path_df_part_1_UC  = "../../data/mobile/feature/df_part_1_UC.csv"
+path_df_part_1_U   = "data/mobile/feature/df_part_1_U.csv"  
+path_df_part_1_I   = "data/mobile/feature/df_part_1_I.csv"
+path_df_part_1_C   = "data/mobile/feature/df_part_1_C.csv"
+path_df_part_1_IC  = "data/mobile/feature/df_part_1_IC.csv"
+path_df_part_1_UI  = "data/mobile/feature/df_part_1_UI.csv"
+path_df_part_1_UC  = "data/mobile/feature/df_part_1_UC.csv"
 
-path_df_part_2_U   = "../../data/mobile/feature/df_part_2_U.csv"  
-path_df_part_2_I   = "../../data/mobile/feature/df_part_2_I.csv"
-path_df_part_2_C   = "../../data/mobile/feature/df_part_2_C.csv"
-path_df_part_2_IC  = "../../data/mobile/feature/df_part_2_IC.csv"
-path_df_part_2_UI  = "../../data/mobile/feature/df_part_2_UI.csv"
-path_df_part_2_UC  = "../../data/mobile/feature/df_part_2_UC.csv"
+path_df_part_2_U   = "data/mobile/feature/df_part_2_U.csv"
+path_df_part_2_I   = "data/mobile/feature/df_part_2_I.csv"
+path_df_part_2_C   = "data/mobile/feature/df_part_2_C.csv"
+path_df_part_2_IC  = "data/mobile/feature/df_part_2_IC.csv"
+path_df_part_2_UI  = "data/mobile/feature/df_part_2_UI.csv"
+path_df_part_2_UC  = "data/mobile/feature/df_part_2_UC.csv"
 
-path_df_part_3_U   = "../../data/mobile/feature/df_part_3_U.csv"  
-path_df_part_3_I   = "../../data/mobile/feature/df_part_3_I.csv"
-path_df_part_3_C   = "../../data/mobile/feature/df_part_3_C.csv"
-path_df_part_3_IC  = "../../data/mobile/feature/df_part_3_IC.csv"
-path_df_part_3_UI  = "../../data/mobile/feature/df_part_3_UI.csv"
-path_df_part_3_UC  = "../../data/mobile/feature/df_part_3_UC.csv"
+path_df_part_3_U   = "data/mobile/feature/df_part_3_U.csv"  
+path_df_part_3_I   = "data/mobile/feature/df_part_3_I.csv"
+path_df_part_3_C   = "data/mobile/feature/df_part_3_C.csv"
+path_df_part_3_IC  = "data/mobile/feature/df_part_3_IC.csv"
+path_df_part_3_UI  = "data/mobile/feature/df_part_3_UI.csv"
+path_df_part_3_UC  = "data/mobile/feature/df_part_3_UC.csv"
 
 # item_sub_set P
-path_df_P = "../../data/raw/tianchi_fresh_comp_train_item.csv"
+path_df_P = "data/fresh_comp_offline/tianchi_fresh_comp_train_item.csv"
 
+import os
 ##### output file
-path_df_result     = "../../data/mobile/xgb/res_xgb.csv"
-path_df_result_tmp = "../../data/mobile/xgb/res_xgb_tmp.csv"
+path_df_result     = "data/mobile/xgb/res_xgb.csv"
+path_df_result_tmp = "data/mobile/xgb/res_xgb_tmp.csv"
+os.makedirs(os.path.dirname(path_df_result), exist_ok=True)
 
 from data_load import *
 
@@ -64,13 +66,14 @@ import pickle
 import gc
 
 #######################################################################
-'''Step 1: training for analysis of the best XGB model (parameters tuning)
-        (1). tuning n_estimators with a relative high learning_rate
-        (2). tuning max_depth & min_child_weight
-        (3). tuning gamma
-        (4). tuning subsample and colsample_bytree
-        (5). tuning lambda & alpha
-        (6). reducing Learning rate and recycle for a more stable parameter combination
+'''
+Step 1: training for analysis of the best XGB model (parameters tuning)
+    (1). tuning n_estimators with a relative high learning_rate
+    (2). tuning max_depth & min_child_weight
+    (3). tuning gamma
+    (4). tuning subsample and colsample_bytree
+    (5). tuning lambda & alpha
+    (6). reducing Learning rate and recycle for a more stable parameter combination
 '''
 
 ### definition of custom f1_score for training parameter feval
@@ -111,10 +114,10 @@ def CV_with_subsample(xg_param, xg_bst=None, cv_fold=5, train_np_ratio=1, valid_
         
         if metric == 'f1-score':
             if xg_bst != None: 
-                bst_tmp = xgb.train(xg_param, dtrain, num_boost_round=xg_param['n_estimators'],
+                bst_tmp = xgb.train(xg_param, dtrain, num_boost_round=1000,
                                      verbose_eval=True, xgb_model=xg_bst[k]) 
             else: 
-                bst_tmp = xgb.train(xg_param, dtrain, num_boost_round=xg_param['n_estimators'],
+                bst_tmp = xgb.train(xg_param, dtrain, num_boost_round=1000,
                                      verbose_eval=True)
                 
             y_preds = (bst_tmp.predict(dvalid) > 0.5).astype(int)
@@ -151,10 +154,12 @@ xg_param = {
         'objective':'binary:logistic'
     }
 
-'''1.1 tuning n_estimators(num_boost_round) with a relative high learning_rate(eta)
+'''
+1.1 tuning n_estimators(num_boost_round) with a relative high learning_rate(eta)
 '''
 
-xg_param['n_estimators'] = 10000
+# xg_param['n_estimators'] = 10000  # 不要在参数字典中设置n_estimators
+n_estimators = 10000
         
 ###### 1.1.2 training and evaluating with fi-score curve (continues test)
 train_df, _ = data_set_construct_by_part(np_ratio = 70, sub_ratio = 1)
@@ -174,8 +179,8 @@ evals_res = {}
 watchlist = [(dtrain,'train'), (dvalid,'valid')]  # set valid set f1-score as the optimize objective
 
 bst = None
-bst = xgb.train(xg_param, dtrain, num_boost_round=xg_param['n_estimators'], early_stopping_rounds=400,
-                evals=watchlist, feval=f1_score, maximize=True, evals_result=evals_res,
+bst = xgb.train(xg_param, dtrain, num_boost_round=n_estimators, early_stopping_rounds=400,
+                evals=watchlist, custom_metric=f1_score, maximize=True, evals_result=evals_res,
                 xgb_model=bst, verbose_eval=True) 
 
 # pks = pickle.dumps(bst)  # store the bst
@@ -183,19 +188,29 @@ bst = xgb.train(xg_param, dtrain, num_boost_round=xg_param['n_estimators'], earl
 
 # info visualization for judgment
 plt.figure(1)
-plt.plot(evals_res['train']['error'], label='train-loss')
-plt.plot(evals_res['valid']['error'], label='valid-loss')
-plt.plot(evals_res['train']['f1-score'], label='train-fi1')
-plt.plot(evals_res['valid']['f1-score'], label='valid-f1')
+# 检查可用的指标名称并绘制
+print("Available metrics:", list(evals_res['train'].keys()))
+if 'logloss' in evals_res['train']:
+    plt.plot(evals_res['train']['logloss'], label='train-loss')
+    plt.plot(evals_res['valid']['logloss'], label='valid-loss')
+elif 'error' in evals_res['train']:
+    plt.plot(evals_res['train']['error'], label='train-loss')
+    plt.plot(evals_res['valid']['error'], label='valid-loss')
+
+if 'f1-score' in evals_res['train']:
+    plt.plot(evals_res['train']['f1-score'], label='train-f1')
+    plt.plot(evals_res['valid']['f1-score'], label='valid-f1')
+
 plt.xlabel('n_estimators')
-plt.ylabel('error_rate/f1-score')
-plt.title('error_rate/f1-score of training - XGB \n (eta=0.1 + default)')
+plt.ylabel('loss/f1-score')
+plt.title('loss/f1-score of training - XGB \n (eta=0.02 + default)')
 plt.legend()
 plt.grid(True, linewidth=0.5)
 plt.show()
 
 
-'''1.6 tuning for the best cutoff
+'''
+1.6 tuning for the best cutoff
 '''
 
 '''
@@ -209,7 +224,7 @@ del(valid_df)
 gc.collect()
 
 # training
-bst = xgb.train(xg_param, dtrain, num_boost_round=xg_param['n_estimators'], verbose_eval=True)
+bst = xgb.train(xg_param, dtrain, num_boost_round=n_estimators, verbose_eval=True)
 
 ###### coarse-grain training
 f1_scores = []
@@ -232,7 +247,8 @@ plt.show()
 '''
 
 #######################################################################
-'''Step 2: prediction
+'''
+Step 2: prediction
 '''
 
 # generation of train set and training
@@ -240,7 +256,7 @@ train_df = train_set_construct(np_ratio=70, sub_ratio=1)
 feature_cols = [i for i in train_df.columns if i not in ['user_id','item_id','item_category','label','class']]
 dtrain = xgb.DMatrix(data=train_df[feature_cols].values, label=train_df['label'].values, feature_names=feature_cols)
 
-bst = xgb.train(xg_param, dtrain, num_boost_round=xg_param['n_estimators'], verbose_eval=True)
+bst = xgb.train(xg_param, dtrain, num_boost_round=n_estimators, verbose_eval=True)
 
 ### predicting
 # loading feature data
@@ -287,7 +303,8 @@ for pred_uic in pd.read_csv(open(path_df_part_3_uic, 'r'), chunksize = 100000):
 
     
 #######################################################################
-'''Step 3: generation result on items' sub set P 
+'''
+Step 3: generation result on items' sub set P 
 '''
 # loading data
 df_P = df_read(path_df_P)
@@ -299,4 +316,4 @@ df_pred.columns = ['user_id', 'item_id']
 df_pred_P = pd.merge(df_pred, df_P_item, on=['item_id'], how='inner')[['user_id', 'item_id']]
 df_pred_P.to_csv(path_df_result, index=False)
 
-print(' - PY131 - ')
+print(' - kuaidouai - ')
