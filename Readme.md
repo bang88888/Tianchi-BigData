@@ -57,11 +57,11 @@ uv run python Mobile_Recommendation/feature_construct/feature_construct_part_3.p
 ```bash
 uv run python Mobile_Recommendation/model_based/k_means_preprocessing.py
 
-uv run python Mobile_Recommendation/model_basedlr_on_subsample.py
+uv run python Mobile_Recommendation/model_based/lr_on_subsample.py
 
 uv run python Mobile_Recommendation/model_based/rf_on_subsample.py
 
 uv run python Mobile_Recommendation/model_based/gbdt_on_subsample.py
 
-uv run python Mobile_Recommendation/xgb_test.py
+uv run python Mobile_Recommendation/model_based/xgb_test.py
 ```
