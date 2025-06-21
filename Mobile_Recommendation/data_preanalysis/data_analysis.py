@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*
     
 '''
-@author: PY131
+@author: kuaidouai
 '''
 
 import os
@@ -34,10 +34,16 @@ data pre_analysis
 # calculation of CTR
 ################################
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+data_dir = os.path.abspath(os.path.join(current_dir, '../../data'))
+fresh_comp_offline_dir = os.path.join(data_dir, 'fresh_comp_offline')
+
 count_all = 0
 count_4 = 0  # the count of behavior_type = 4
-for df in pd.read_csv(open("../../data/fresh_comp_offline/tianchi_fresh_comp_train_user.csv", 'r'), 
-                      chunksize = 100000): 
+for df in pd.read_csv(
+        open(os.path.join(fresh_comp_offline_dir, 'tianchi_fresh_comp_train_user.csv'), 'r'), 
+        chunksize = 100000
+    ): 
     try:
         count_user = df['behavior_type'].value_counts()
         count_all += count_user[1]+count_user[2]+count_user[3]+count_user[4]
@@ -56,20 +62,27 @@ print(ctr)
 
 count_day = {}  # using dictionary for date-count pairs
 for i in range(31): # for speed up the program, initial dictionary here
-    if i <= 12: date = '2014-11-%d' % (i+18)
-    else: date = '2014-12-%d' % (i-12)
+    if i <= 12: date = '2014-11-%02d' % (i+18)
+    else: date = '2014-12-%02d' % (i-12)
     count_day[date] = 0
     
 batch = 0
-dateparse = lambda dates: pd.datetime.strptime(dates, '%Y-%m-%d %H')
-for df in pd.read_csv(open("../../data/fresh_comp_offline/tianchi_fresh_comp_train_user.csv", 'r'), 
-                      parse_dates=['time'], index_col=['time'], date_parser=dateparse,
-                      chunksize = 100000): 
+for df in pd.read_csv(
+        open(os.path.join(fresh_comp_offline_dir, 'tianchi_fresh_comp_train_user.csv'), 'r'), 
+        parse_dates=['time'], index_col=['time'],
+        date_format='%Y-%m-%d %H',
+        chunksize = 100000
+    ):
     try:
         for i in range(31):
-            if i <= 12: date = '2014-11-%d' % (i+18)
-            else: date = '2014-12-%d' % (i-12)
-            count_day[date] += df[date].shape[0]
+            if i <= 12: date = '2014-11-%02d' % (i+18)
+            else: date = '2014-12-%02d' % (i-12)
+            # 按日期范围过滤数据
+            try:
+                day_data = df[df.index.strftime('%Y-%m-%d') == date]
+                count_day[date] += day_data.shape[0]
+            except:
+                count_day[date] += 0
         batch += 1
         print('chunk %d done.' %batch ) 
         
@@ -78,11 +91,13 @@ for df in pd.read_csv(open("../../data/fresh_comp_offline/tianchi_fresh_comp_tra
         break
 
 from dict_csv import *
-row_dict2csv(count_day, "../data/count_day.csv" )
+row_dict2csv(count_day, os.path.join(data_dir, "count_day.csv" ) )
 
-df_count_day = pd.read_csv(open("../data/count_day.csv",'r'), 
-                           header = None,
-                           names = ['time', 'count'])
+df_count_day = pd.read_csv(
+    open(os.path.join(data_dir, "count_day.csv"),'r'), 
+    header = None,
+    names = ['time', 'count']
+)
 import matplotlib.pyplot as plt
 
 # x_day = df_count_day.index.get_values()
@@ -103,38 +118,47 @@ plt.show()
 
 count_day = {}  # using dictionary for date-count pairs
 for i in range(31): # for speed up the program, initial dictionary here
-    if i <= 12: date = '2014-11-%d' % (i+18)
-    else: date = '2014-12-%d' % (i-12)
+    if i <= 12: date = '2014-11-%02d' % (i+18)
+    else: date = '2014-12-%02d' % (i-12)
     count_day[date] = 0
     
 batch = 0
-dateparse = lambda dates: pd.datetime.strptime(dates, '%Y-%m-%d %H')
 
-df_P = pd.read_csv(open("../../data/fresh_comp_offline/tianchi_fresh_comp_train_item.csv", 'r'), index_col = False)
+df_P = pd.read_csv(open(os.path.join(fresh_comp_offline_dir, 'tianchi_fresh_comp_train_item.csv'), 'r'), index_col = False)
 
-for df in pd.read_csv(open("../../data/fresh_comp_offline/tianchi_fresh_comp_train_user.csv", 'r'), 
-                      parse_dates=['time'], index_col=['time'], date_parser=dateparse,
-                      chunksize = 100000): 
+for df in pd.read_csv(
+        open(os.path.join(fresh_comp_offline_dir, 'tianchi_fresh_comp_train_user.csv'), 'r'), 
+        parse_dates=['time'], index_col=['time'],
+        date_format='%Y-%m-%d %H',
+        chunksize = 100000
+    ): 
     try:
         df = pd.merge(df.reset_index(), df_P, on = ['item_id']).set_index('time')
         
         for i in range(31):
-            if i <= 12: date = '2014-11-%d' % (i+18)
-            else: date = '2014-12-%d' % (i-12)
-            count_day[date] += df[date].shape[0]
+            if i <= 12: date = '2014-11-%02d' % (i+18)
+            else: date = '2014-12-%02d' % (i-12)
+            # 按日期范围过滤数据
+            try:
+                day_data = df[pd.to_datetime(df.index).strftime('%Y-%m-%d') == date]
+                count_day[date] += day_data.shape[0]
+            except:
+                count_day[date] += 0
         batch += 1
-        print('chunk %d done.' %batch ) 
+        print('visualization month record based on date(11-18->12-18) chunk %d done.' %batch ) 
         
     except StopIteration:
         print("finish data process")
         break
 
 from dict_csv import *
-row_dict2csv(count_day, "../data/count_day_of_P.csv" )
+row_dict2csv(count_day, os.path.join(data_dir, "count_day_of_P.csv" ) )
 
-df_count_day = pd.read_csv(open("../data/count_day_of_P.csv",'r'), 
-                           header = None,
-                           names = ['time', 'count'])
+df_count_day = pd.read_csv(
+    open(os.path.join(data_dir, "count_day_of_P.csv"),'r'), 
+    header = None,
+    names = ['time', 'count']
+)
 import matplotlib.pyplot as plt
 
 # x_day = df_count_day.index.get_values()
@@ -156,30 +180,38 @@ plt.show()
 count_hour_1217 = {}   # using dictionary for hour-count pairs 
 count_hour_1218 = {}   # 4 types of behavior formed as {key: counts list of 1/2/3/4}
 for i in range(24):    # to speed up the program, initial dictionaries here
-    time_str17 = '2014-12-17 %02.d' % i
-    time_str18 = '2014-12-18 %02.d' % i
+    time_str17 = '2014-12-17 %02d' % i
+    time_str18 = '2014-12-18 %02d' % i
     count_hour_1217[time_str17] = [0,0,0,0]
     count_hour_1218[time_str18] = [0,0,0,0]
 
 batch = 0   # for process printing
-dateparse = lambda dates: pd.datetime.strptime(dates, '%Y-%m-%d %H')
-for df in pd.read_csv(open("../../data/fresh_comp_offline/tianchi_fresh_comp_train_user.csv", 'r'), 
-                      parse_dates = ['time'], 
-                      index_col = ['time'], 
-                      date_parser = dateparse,
-                      chunksize = 50000): 
+for df in pd.read_csv(
+        open(os.path.join(fresh_comp_offline_dir, 'tianchi_fresh_comp_train_user.csv'), 'r'), 
+        parse_dates=['time'], index_col=['time'],
+        date_format='%Y-%m-%d %H',
+        chunksize = 100000
+    ):
     try:
         for i in range(24):
-            time_str17 = '2014-12-17 %02.d' % i
-            time_str18 = '2014-12-18 %02.d' % i
-            tmp17 = df[time_str17]['behavior_type'].value_counts()
-            tmp18 = df[time_str18]['behavior_type'].value_counts()
+            time_str17 = '2014-12-17 %02d' % i
+            time_str18 = '2014-12-18 %02d' % i
+            try:
+                hour17_data = df[pd.to_datetime(df.index).strftime('%Y-%m-%d %H') == time_str17]
+                tmp17 = hour17_data['behavior_type'].value_counts()
+            except:
+                tmp17 = pd.Series(dtype=int)
+            try:
+                hour18_data = df[pd.to_datetime(df.index).strftime('%Y-%m-%d %H') == time_str18]
+                tmp18 = hour18_data['behavior_type'].value_counts()
+            except:
+                tmp18 = pd.Series(dtype=int)
             for j in range(len(tmp17)):              
-                count_hour_1217[time_str17][tmp17.index[j]-1] += tmp17[tmp17.index[j]]
+                count_hour_1217[time_str17][int(tmp17.index[j])-1] += tmp17[tmp17.index[j]]  # type: ignore
             for j in range(len(tmp18)):    
-                count_hour_1218[time_str18][tmp18.index[j]-1] += tmp18[tmp18.index[j]]                       
+                count_hour_1218[time_str18][int(tmp18.index[j])-1] += tmp18[tmp18.index[j]]  # type: ignore                       
         batch += 1
-        print('chunk %d done.' %batch ) 
+        print('visualization based on hour(e.g. 12-17-18) chunk %d done.' %batch ) 
         
     except StopIteration:
         print("finish data process")
@@ -188,11 +220,11 @@ for df in pd.read_csv(open("../../data/fresh_comp_offline/tianchi_fresh_comp_tra
 # storing the count result
 df_1217 = pd.DataFrame.from_dict(count_hour_1217, orient='index')  # convert dict to dataframe
 df_1218 = pd.DataFrame.from_dict(count_hour_1218, orient='index') 
-# df_1217.to_csv("../data/count_hour17.csv")                         # store as csv file
-# df_1218.to_csv("../data/count_hour18.csv")
+df_1217.to_csv(os.path.join(data_dir, "count_hour17.csv"), index=False)                         # store as csv file
+df_1218.to_csv(os.path.join(data_dir, "count_hour18.csv"), index=False)
 
-df_1217 = pd.read_csv("../data/count_hour17.csv", index_col = 0)
-df_1218 = pd.read_csv("../data/count_hour18.csv", index_col = 0)
+# df_1217 = pd.read_csv(os.path.join(data_dir, "count_hour17.csv"), index_col = 0)
+# df_1218 = pd.read_csv(os.path.join(data_dir, "count_hour18.csv"), index_col = 0)
 
 # drawing figure
 import matplotlib.pyplot as plt
@@ -215,31 +247,36 @@ plt.show()
 # user behavior analysis
 ##################################################
 
-user_list = [10001082, 
-             10496835, 
-             107369933,
-             108266048,
-             10827687, 
-             108461135, 
-             110507614, 
-             110939584, 
-             111345634, 
-             111699844]
+user_list = [
+    10001082, 
+    10496835, 
+    107369933,
+    108266048,
+    10827687, 
+    108461135, 
+    110507614, 
+    110939584, 
+    111345634, 
+    111699844,
+]
 user_count = {}
 for i in range(10):
     user_count[user_list[i]] = [0,0,0,0]  # key-value value = count of 4 types of behaviors
  
 batch = 0   # for process printing   
-for df in pd.read_csv(open("../../data/fresh_comp_offline/tianchi_fresh_comp_train_user.csv", 'r'), 
-                      chunksize = 100000,
-                      index_col = ['user_id']): 
+for df in pd.read_csv(
+        open(os.path.join(fresh_comp_offline_dir, 'tianchi_fresh_comp_train_user.csv'), 'r'), 
+        parse_dates=['time'], index_col=['time'],
+        date_format='%Y-%m-%d %H',
+        chunksize = 100000
+    ):
     try:
         for i in range(10):
             tmp = df[df.index == user_list[i]]['behavior_type'].value_counts()
             for j in range(len(tmp)):      
                 user_count[user_list[i]][tmp.index[j]-1] += tmp[tmp.index[j]]
         batch += 1
-        print('chunk %d done.' %batch )   
+        print('user behavior analysis chunk %d done.' %batch )   
              
     except StopIteration:
         print("Iteration is stopped.")
@@ -247,7 +284,7 @@ for df in pd.read_csv(open("../../data/fresh_comp_offline/tianchi_fresh_comp_tra
 
 # storing the count result
 df_user_count = pd.DataFrame.from_dict(user_count, orient='index')  # convert dict to dataframe) 
-df_user_count.to_csv("../data/user_count.csv")                   # store as csv file
+df_user_count.to_csv(os.path.join(data_dir, "user_count.csv"))                   # store as csv file
 
 
 ##################################################
